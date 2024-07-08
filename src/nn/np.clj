@@ -16,11 +16,22 @@
 ;; must be called after config/init! else it will load the wrong Python
 (require '[libpython-clj2.require :refer [require-python]])
 (require-python '[numpy :as np :bind-ns true])
+(require-python '[builtins :as python :bind-ns true])
 
 (defn zip
   "Creates a lazy seq of vectors, each of which is a tuple across the current elements of the source sequences"
   [& args]
   (apply map vector args))
+
+(defn tuple [& elts] (py. python tuple (vec elts)))
+(def all (python/slice nil nil nil))
+
+(defn item
+  [obj & idx]
+  (let [indexes (mapv #(if (= :all %) all %) idx)]
+    (if (> (count indexes) 1)
+      (get-item obj (py. python tuple indexes))
+      (get-item obj (first indexes)))))
 
 (defn nparray
   "Converts a Clojure collection to a Numpy array"

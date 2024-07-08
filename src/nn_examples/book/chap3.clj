@@ -1,5 +1,5 @@
 (ns nn-examples.book.chap3
-  (:require [nn.np :refer [zip nparray np+ np- np* np-div np-fdiv dot T]]
+  (:require [nn.np :refer [zip tuple all item nparray np+ np- np* np-div np-fdiv dot T]]
             [tech.v3.tensor :as dtt]
             [libpython-clj2.require :refer [require-python]]
             [libpython-clj2.python :refer [as-python as-jvm ->python ->jvm
@@ -28,5 +28,15 @@
 (def layer2_outputs (np+ (dot layer1_outputs (T (nparray weights2))) biases2))
 
 (println layer2_outputs)
+
+;; pg.63
+(require-python '[nnfs :as nnfs])
+(require-python '[nnfs.datasets :refer [spiral_data]])
+(require '[nn-examples.book.plotter :as plt])
+
+(nnfs/init)
+(let [[X y] (spiral_data :samples 100 :classes 3)]
+;;  (plt/scatter (item X 0) (item X 1))
+  (plt/scatter (item X :all 0) (item X :all 1) :c y :cmap "brg"))
 
 (println "== END ==")
